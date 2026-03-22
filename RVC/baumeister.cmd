@@ -6,6 +6,8 @@ rem Get ESC
 FOR /F %%a in ('ECHO PROMPT $E^| CMD') do SET "ESC=%%a"
 
 SET "PB=%ESC%["
+SET "AF=38;5;"
+SET "AB=48;5;"
 
 SET "CLR=%PB%0m"
 
@@ -17,13 +19,17 @@ SET "_RED_=%PB%31m"
 SET "GREEN=%PB%32m"
 SET "YELOW=%PB%33m"
 SET "REGAL=%PB%35m"
-SET "BROWN=%PB%38;5;88m"
+SET "BROWN=%PB%%AF%88m"
 
-SET "BARSEN=%PB%48;5;234m"
+SET "BARSEN=%PB%%AB%234m"
 
 :::::::::::::::::::::::::::::::::::::::::: MAIN ::::::::::::::::::::::::::::::::::::::::::
 
+rem custom clear
 SET "ACLR=%CLR%%BARSEN%"
+
+rem preset vars
+SET "baum=baum_std"
 
 :PLAQUE
 
@@ -39,7 +45,9 @@ ECHO.	[e] edit configuration%REGAL%
 ECHO.	[h] help
 ECHO.	[q] quit
 ECHO %ACLR%
-ECHO Current build script: [%INVT%baum_std%ACLR%].
+ECHO Configuration:%YELOW%
+ECHO.	build script = [%ACLR%%baum%%YELOW%];
+ECHO.
 
 ECHO | SET /p=%_RED_%
 CHOICE /c rfcehq /n /m "Your choice:"
@@ -48,6 +56,16 @@ ECHO | SET /p=%CLR%
 
 IF "%ans%"=="1" (
 	rem run
+
+	ECHO %CLR%
+	CLS
+
+	rem put run here
+	SET ans=%errorlevel%
+
+	ECHO.
+	ECHO Program exited with errorlevel %ans%.
+	PAUSE
 ) ELSE IF "%ans%"=="2" (
 	rem fused
 ) ELSE IF "%ans%"=="3" (
@@ -58,6 +76,7 @@ IF "%ans%"=="1" (
 	rem help
 ) ELSE IF "%ans%"=="6" (
 	rem quit
+
 	GOTO QUIT
 ) ELSE IF "%ans%"=="0" (
 	rem ctrlC
