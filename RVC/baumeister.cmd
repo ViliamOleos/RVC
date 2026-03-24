@@ -30,6 +30,7 @@ SET "ACLR=%CLR%%BARSEN%"
 
 rem preset vars
 SET "baum=baum_std"
+SET "prog=output\main"
 
 :PLAQUE
 
@@ -47,6 +48,7 @@ ECHO.	[q] quit
 ECHO %ACLR%
 ECHO Configuration:%YELOW%
 ECHO.	build script = [%ACLR%%baum%%YELOW%];
+ECHO.	program = [%ACLR%%prog%%YELOW%]
 ECHO.
 
 ECHO | SET /p=%_RED_%
@@ -56,20 +58,14 @@ ECHO | SET /p=%CLR%
 
 IF "%ans%"=="1" (
 	rem run
-
-	ECHO %CLR%
-	CLS
-
-	rem put run here
-	SET ans=%errorlevel%
-
-	ECHO.
-	ECHO Program exited with errorlevel %ans%.
-	PAUSE
+	CALL :run
 ) ELSE IF "%ans%"=="2" (
 	rem fused
+	CALL :compile
+	CALL :run
 ) ELSE IF "%ans%"=="3" (
 	rem compile
+	CALL :compile
 ) ELSE IF "%ans%"=="4" (
 	rem edit
 ) ELSE IF "%ans%"=="5" (
@@ -86,7 +82,36 @@ IF "%ans%"=="1" (
 
 GOTO PLAQUE
 
-:QUIT
-CLS
+:::::::::::::::::::::::::::::::::::::::::: FUNC ::::::::::::::::::::::::::::::::::::::::::
+
+:run
+
+	ECHO %CLR%
+	CLS
+
+	%prog%
+	SET ans=%errorlevel%
+	
+	ECHO.
+	ECHO Execution ended, program returned %ans%.
+	PAUSE
+
+goto:eof
+
+:compile
+
+	ECHO %CLR%
+	CLS
+
+	CALL %baum%
+	
+	ECHO.
+	ECHO Compilation ended.
+	PAUSE
+
+goto:eof
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+:QUIT
+CLS

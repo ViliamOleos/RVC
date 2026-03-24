@@ -1,1 +1,1 @@
-echo baumstd!!!!
+gcc main.c -o output\main.exe -O3 -mcpu=native -march=native -mtune=native -Wall -Wno-int-to-pointer-cast -std=c23
