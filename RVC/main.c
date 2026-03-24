@@ -1,7 +1,10 @@
 #include <stdint.h>
 #include <stdio.h>
 
+#include <windows.h>
+
 int main() {
-	printf("Hello, World!\n");
+	printf("Gaeming!\n");
+
 	return(0);
 }
