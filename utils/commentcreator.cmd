@@ -1,13 +1,13 @@
 @echo off
 
 rem Config:
-SET CHAR=:
+SET CHAR=/
 
 ECHO.
 ECHO.  This script shall create a header-style comment for this codebase.
 ECHO Input a comment label which will be in the middle of the comment.
 ECHO Make sure Your label isn't ludicrously big and has an even number of characters.
-ECHO Example comment: :::...::: MAIN :::...:::
+ECHO Example comment: %CHAR%%CHAR%%CHAR%...%CHAR%%CHAR%%CHAR% MAIN %CHAR%%CHAR%%CHAR%...%CHAR%%CHAR%%CHAR%
 ECHO.
 SET /p label="Comment Label: "
 ECHO.
