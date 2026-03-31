@@ -51,28 +51,29 @@ ECHO.	build script = [%ACLR%%baum%%YELOW%];
 ECHO.	program = [%ACLR%%prog%%YELOW%]
 ECHO.
 
-ECHO | SET /p=%_RED_%
+ECHO | SET "/p=%_RED_%"
 CHOICE /c rfcehq /n /m "Your choice:"
-SET ans=%errorlevel%
-ECHO | SET /p=%CLR%
+SET "ans=%errorlevel%"
+ECHO | SET "/p=%CLR%"
 
 IF "%ans%"=="1" (
 	rem run
 	CALL :run
 ) ELSE IF "%ans%"=="2" (
 	rem fused
-	CALL :compile
-	CALL :run
+	CALL :compile return
+	IF "%return%"=="0" (
+		CALL :run
+	)
 ) ELSE IF "%ans%"=="3" (
 	rem compile
-	CALL :compile
+	CALL :compile return
 ) ELSE IF "%ans%"=="4" (
 	rem edit
 ) ELSE IF "%ans%"=="5" (
 	rem help
 ) ELSE IF "%ans%"=="6" (
 	rem quit
-
 	GOTO QUIT
 ) ELSE IF "%ans%"=="0" (
 	rem ctrlC
@@ -90,7 +91,7 @@ GOTO PLAQUE
 	CLS
 
 	%prog%
-	SET ans=%errorlevel%
+	SET "ans=%errorlevel%"
 	
 	ECHO.
 	ECHO Execution ended, program returned %ans%.
@@ -98,15 +99,22 @@ GOTO PLAQUE
 
 goto:eof
 
+rem [return] %1 - compiler errorlevel
 :compile
+	setlocal enabledelayedexpansion
 
 	ECHO %CLR%
 	CLS
 
 	CALL %baum%
-	
+	SET "%1=%errorlevel%"
+
 	ECHO.
-	ECHO Compilation ended.
+	IF "!%1!"=="1" (
+		ECHO Compilation failed; aborting any further scheduled tasks.
+	) ELSE (
+		ECHO Compilation ended.
+	)
 	PAUSE
 
 goto:eof
