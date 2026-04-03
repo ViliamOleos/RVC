@@ -25,13 +25,28 @@
 
 #define RVF_HEDER(char) (((HFILE*)(char))-1)
 
+/*************************** DOCS ***************************
+ * Opens a read-only file just for the compiler process.    *
+ * ! Uses Win32 OpenFile under the hood.                    *
+ *                                                          *
+ *                           ARGS                           *
+ *   path = search name; cannot be NULL.                    *
+ *                                                          *
+ *                          RETURN                          *
+ * Mallocated character buffer with preliminary header.     *
+ *                                                          *
+ *                          ERRORS                          *
+ * Header is HFILE_ERROR on errors. Use GetLastError() for  *
+ *   error code.                                            *
+ *                                                          *
+ ************************************************************/
 char* rv_openFile(const char* path) {
 	OFSTRUCT openstruct; 
 	HFILE* nufile = malloc(sizeof(HFILE)+1); // HEDER + NULL IN BUF
 
 	*nufile = OpenFile(
 		path, &openstruct,
-		OF_READ | OF_SHARE_DENY_READ
+		OF_READ | OF_SHARE_EXCLUSIVE
 	); nufile++;
 	*(char*)nufile = '\0';
 
