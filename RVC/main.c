@@ -23,6 +23,8 @@
 
 ////////////////////////////////////////// FILE //////////////////////////////////////////
 
+#define RVF_HEDER(char) (((HFILE*)(char))-1)
+
 char* rv_openFile(const char* path) {
 	OFSTRUCT openstruct; 
 	HFILE* nufile = malloc(sizeof(HFILE)+1); // HEDER + NULL IN BUF
@@ -30,10 +32,16 @@ char* rv_openFile(const char* path) {
 	*nufile = OpenFile(
 		path, &openstruct,
 		OF_READ | OF_SHARE_DENY_READ
-	);
-	*(char*)(nufile+1) = '\0';
+	); nufile++;
+	*(char*)nufile = '\0';
 
 	return((char*)nufile);
+}
+
+uint64_t rv_filesize(char* file) {
+	DWORD filesiz[2];
+	*filesiz = GetFileSize((HANDLE)*RVF_HEDER(file), filesiz+1);
+	return(*(uint64_t*)filesiz);
 }
 
 ////////////////////////////////////////// MAIN //////////////////////////////////////////
@@ -43,8 +51,21 @@ int main() {
 
 	CC_ENABLECOLOURCONSOLE();
 
-	mainfile = rv_openFile("main.c");
-	printf("Opened file main.c: %X {!=%X}", *(HFILE*)mainfile, HFILE_ERROR);
+	mainfile = rv_openFile("a.txt");
+	printf("File size: %llu\n", rv_filesize(mainfile));
+
+
+		/*
+	DWORD bytesread;
+
+	ReadFile(
+		*RVF_HEDER(mainfile),
+		mainfile,
+		, // max read
+		bytesread,
+		NULL
+	);
+		*/
 
 	return(0);
 }
