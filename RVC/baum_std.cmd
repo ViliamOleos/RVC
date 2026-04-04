@@ -1,1 +1,1 @@
-gcc main.c -o output\main.exe -O3 -mcpu=native -march=native -mtune=native -Wall -std=c23
+gcc main.c rvfile.c -o output\main.exe -O3 -mcpu=native -march=native -mtune=native -Wall -std=c23
