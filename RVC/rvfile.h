@@ -4,6 +4,7 @@
 ////////////////////////////////////////// DECL //////////////////////////////////////////
 
 #include <stdint.h>
+#include <stdlib.h>
 
 #include <windows.h>
 
@@ -11,7 +12,7 @@
 
 #define RVF_HEDER(char) (((HFILE*)(char))-1)
 /************************************ DOCS *************************************
- * Gives You the pointer to the header of an RVfile.                     X003R *
+ * Gives You the pointer to the header of an RVfile. [X004R]             X003R *
  *******************************************************************************/
 
 ////////////////////////////////////////// MAIN //////////////////////////////////////////
@@ -20,6 +21,7 @@ char* rv_openFile(const char* path);
 /************************************ DOCS *************************************
  * Opens a read-only file exclusively for the compiler process.                *
  * ! Uses Win32 OpenFile under the hood.                                       *
+ * Buffer is initialised with a single \0.                                     *
  *                                                                             *
  *                                   RETURN                                    *
  * RVfile [X004R]                                                              *
@@ -31,9 +33,38 @@ char* rv_openFile(const char* path);
  * Use RVF_HEDER() to get the header's pointer easily. [X003R]           X001R *
  *******************************************************************************/
 
+char* rv_rbufFile(char* file, uint64_t newlen);
+/************************************ DOCS *************************************
+ * "Rebuffers" or resizes a buffer of an RVfile by reallocating it.            *
+ *                                                                             *
+ *                                    ARGS                                     *
+ * newlen - new amount of bytes that the RVfile can hold                       *
+ *                                                                             *
+ *                                   RETURN                                    *
+ * RVfile [X004R]                                                        X005R *
+ *******************************************************************************/
+
+char rv_readFile(char* file, uint32_t bytes);
+/************************************ DOCS *************************************
+ * Transfers [bytes] bytes of data from disk to the RVfile buffer specified.   *
+ * ! Uses Win32 ReadFile under the hood.                                       *
+ * Specifically compatible with Windows 7.                                     *
+ *                                                                             *
+ *                                   RETURN                                    *
+ * Bool, where false (0) indicates a failure.                                  *
+ *                                                                             *
+ *                                   ERRORS                                    *
+ * As said in RETURN section. Use GetLastError for error code.                 *
+ *                                                                             *
+ *                                    TIPS                                     *
+ * Use rv_filesize() [X002R] and rv_rbufFile() [X005R] in combination to       *
+ *    prepare Your RVfile for reading. [X004R]                           X002R *
+ *******************************************************************************/
+
 uint64_t rv_filesize(char* file);
 /************************************ DOCS *************************************
- * Tells You the size (in bytes) of an open RVfile.                            *
+ * Tells You the size (in bytes) of an open RVfile, to be more exact, the size *
+ *    on disk. [X004R]                                                         *
  * ! Uses Win32 GetFileSize under the hood.                                    *
  *                                                                             *
  *                                   ERRORS                                    *

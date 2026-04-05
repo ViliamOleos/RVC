@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include <windows.h>
 
@@ -27,25 +28,20 @@ do { \
 ////////////////////////////////////////// MAIN //////////////////////////////////////////
 
 int main() {
-	char* mainfile;
+	char* mainfile; uint64_t mainfile_siz;
 
-	CC_ENABLECOLOURCONSOLE();
+		CC_ENABLECOLOURCONSOLE();
 
 	mainfile = rv_openFile("main.c");
-	printf("File size: %llu\n", rv_filesize(mainfile));
+	mainfile_siz = rv_filesize(mainfile);
 
+		printf("File size: %llu\n", mainfile_siz);
 
-		/*
-	DWORD bytesread;
+	mainfile = rv_rbufFile(mainfile, mainfile_siz+1);
+	rv_readFile(mainfile, mainfile_siz);
+	mainfile[mainfile_siz]='\0';
 
-	ReadFile(
-		*RVF_HEDER(mainfile),
-		mainfile,
-		, // max read
-		bytesread,
-		NULL
-	);
-		*/
+		printf("%s\n\n\n", mainfile);
 
 	return(0);
 }
