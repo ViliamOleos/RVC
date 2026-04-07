@@ -29,6 +29,33 @@ char rv_readFile(char* file, uint32_t bytes) {
 	)); 
 }
 
+char rv_readFile_batch(char* file, uint64_t bytes) {
+	DWORD bytesread;
+	uint64_t times = bytes/(DWORD)-1;
+
+	while(times--) {
+		if(!(bytesread = ReadFile(
+			(HANDLE)*RVF_HEDER(file),
+			file,
+			(DWORD)-1,
+			&bytesread,
+			NULL
+		))) {
+			return(bytesread);
+		}
+
+		file += (DWORD)-1;
+	}
+
+	return(ReadFile(
+		(HANDLE)*RVF_HEDER(file),
+		file,
+		bytes%(DWORD)-1,
+		&bytesread,
+		NULL
+	)); 
+}
+
 uint64_t rv_filesize(char* file) {
 	DWORD filesiz[2];
 	*filesiz = GetFileSize((HANDLE)*RVF_HEDER(file), filesiz+1);

@@ -47,7 +47,8 @@ char* rv_rbufFile(char* file, uint64_t newlen);
 char rv_readFile(char* file, uint32_t bytes);
 /************************************ DOCS *************************************
  * Transfers [bytes] bytes of data from disk to the RVfile buffer specified.   *
- * ! Uses Win32 ReadFile under the hood.                                       *
+ * ! Uses Win32 ReadFile under the hood. To be absolutely honest, just a good  *
+ *    wrapper over ReadFile, much more than any of the other functions.        *
  * Specifically compatible with Windows 7.                                     *
  *                                                                             *
  *                                   RETURN                                    *
@@ -59,6 +60,18 @@ char rv_readFile(char* file, uint32_t bytes);
  *                                    TIPS                                     *
  * Use rv_filesize() [X002R] and rv_rbufFile() [X005R] in combination to       *
  *    prepare Your RVfile for reading. [X004R]                           X002R *
+ *******************************************************************************/
+
+char rv_readFile_batch(char* file, uint64_t bytes);
+/************************************ DOCS *************************************
+ * Similar to rv_readFile [X002R], but calls ReadFile multiple times in a loop *
+ *    , allowing to bypass the usual 32bit restriction.                        *
+ *                                                                             *
+ *                                   RETURN                                    *
+ * Bool, where false (0) indicates a failure.                                  *
+ *                                                                             *
+ *                                   ERRORS                                    *
+ * Mostly the same. Returns if one of the loop calls fail.               X006R *
  *******************************************************************************/
 
 uint64_t rv_filesize(char* file);

@@ -29,6 +29,7 @@ do { \
 
 int main() {
 	char* mainfile; uint64_t mainfile_siz;
+	char tempReturn;
 
 		CC_ENABLECOLOURCONSOLE();
 
@@ -38,11 +39,12 @@ int main() {
 		printf("File size: %llu\n", mainfile_siz);
 
 	mainfile = rv_rbufFile(mainfile, mainfile_siz+1);
-	rv_readFile(mainfile, mainfile_siz);
+	tempReturn = rv_readFile_batch(mainfile, mainfile_siz);
 	mainfile[mainfile_siz]='\0';
 
-		printf("%s\n\n\n", mainfile);
-
+		printf("%s\n", mainfile);
+		printf("\n> %hhu", tempReturn);
+	
 	return(0);
 }
 
