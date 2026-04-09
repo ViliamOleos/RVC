@@ -28,22 +28,9 @@ do { \
 ////////////////////////////////////////// MAIN //////////////////////////////////////////
 
 int main() {
-	char* mainfile; uint64_t mainfile_siz;
-	char tempReturn;
+	char* mainfile; uint32_t mainfile_siz;
 
 		CC_ENABLECOLOURCONSOLE();
-
-	mainfile = rv_openFile("main.c");
-	mainfile_siz = rv_filesize(mainfile);
-
-		printf("File size: %llu\n", mainfile_siz);
-
-	mainfile = rv_rbufFile(mainfile, mainfile_siz+1);
-	tempReturn = rv_readFile_batch(mainfile, mainfile_siz);
-	mainfile[mainfile_siz]='\0';
-
-		printf("%s\n", mainfile);
-		printf("\n> %hhu", tempReturn);
 	
 	return(0);
 }

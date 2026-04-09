@@ -33,6 +33,12 @@ char* rv_openFile(const char* path);
  * Use RVF_HEDER() to get the header's pointer easily. [X003R]           X001R *
  *******************************************************************************/
 
+void rv_closeFile(void* file);
+/************************************ DOCS *************************************
+ * Closes a RVfile [X004R] by calling win32 CloseHandle and freeing the memory *
+ *                                                                       X005R *
+ *******************************************************************************/
+
 char* rv_rbufFile(char* file, uint64_t newlen);
 /************************************ DOCS *************************************
  * "Rebuffers" or resizes a buffer of an RVfile by reallocating it.            *
