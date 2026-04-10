@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <windows.h>
 
@@ -27,10 +28,14 @@ do { \
 
 ////////////////////////////////////////// MAIN //////////////////////////////////////////
 
-int main() {
-	char* mainfile; uint32_t mainfile_siz;
+int main(int argc, char* argv[]) {
+	size_t sumarglen;
 
 		CC_ENABLECOLOURCONSOLE();
+
+	for(int i=sumarglen=0; i<argc; i++) {
+		sumarglen += strlen(argv[i])+1;
+	};
 	
 	return(0);
 }
