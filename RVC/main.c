@@ -25,17 +25,35 @@ do { \
 	SetConsoleMode(console, consoleState); \
 } while(0)
 
-
 ////////////////////////////////////////// MAIN //////////////////////////////////////////
 
 int main(int argc, char* argv[]) {
-	size_t sumarglen;
+	char* args;
 
-		CC_ENABLECOLOURCONSOLE();
+	CC_ENABLECOLOURCONSOLE();
 
-	for(int i=sumarglen=0; i<argc; i++) {
-		sumarglen += strlen(argv[i])+1;
-	};
+	{
+		int i; char* p;
+		size_t sumarglen;
+		uint16_t argvlens[argc];
+
+		if(argc==1) { args=""; } else {
+
+			for(sumarglen=0, i=1; i<argc; i++) 
+				{ argvlens[i]=strlen(argv[i]); sumarglen+=argvlens[i]; }
+
+			args = malloc(sumarglen);
+
+			for(p=args,i=1; i<argc; i++) {
+				memcpy(p, argv[i], argvlens[i]);
+				p += argvlens[i];
+				*p = ' '; p++;
+			} p[-1] = '\0';
+
+		}
+	}
+
+	printf("%s\n", args);
 	
 	return(0);
 }
