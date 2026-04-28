@@ -30,13 +30,12 @@ do { \
 /// dest is a pointer to string 'cause weird stuff, just didn't bother
 void argv_homogeniser(char** dest, int argc, char** argv) {
 	int i; char* p;
-	size_t sumarglen;
+	uint16_t sumarglen;
 	uint16_t argvlens[argc];
 
 	if(argc==1) { *dest=""; } else {
 
-		for(sumarglen=0, i=1; i<argc; i++) 
-			{ argvlens[i]=strlen(argv[i]); sumarglen+=argvlens[i]; }
+		for(sumarglen=0, i=1; i<argc; i++) { argvlens[i]=strlen(argv[i]); sumarglen+=argvlens[i]+1; }
 
 		*dest = malloc(sumarglen);
 
@@ -59,22 +58,19 @@ int main(int argc, char* argv[]) {
 
 	argv_homogeniser(&args, argc, argv);
 
-	printf("%s\n", args);
-	fflush(stdout);
+	printf("Received arguments: \"%s\"\n", args);
 
-#if 0
 	for(p=args; *p!='\0'; p++) {
 		switch(*p) {
 			case '-':
-				printf("arg encountered!\n");
+				printf("HEY!\n");
 			break;
 
 			default:
-				printf("%c", *p);
+				printf("eh.\n");
 			break;
 		}
 	}
-#endif
 	
 	return(0);
 }
