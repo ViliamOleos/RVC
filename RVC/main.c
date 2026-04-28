@@ -52,6 +52,7 @@ void argv_homogeniser(char** dest, int argc, char** argv) {
 ////////////////////////////////////////// MAIN //////////////////////////////////////////
 
 int main(int argc, char* argv[]) {
+	char* p;
 	char* args;
 
 		CC_ENABLECOLOURCONSOLE();
@@ -59,6 +60,21 @@ int main(int argc, char* argv[]) {
 	argv_homogeniser(&args, argc, argv);
 
 	printf("%s\n", args);
+	fflush(stdout);
+
+#if 0
+	for(p=args; *p!='\0'; p++) {
+		switch(*p) {
+			case '-':
+				printf("arg encountered!\n");
+			break;
+
+			default:
+				printf("%c", *p);
+			break;
+		}
+	}
+#endif
 	
 	return(0);
 }
