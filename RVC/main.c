@@ -12,18 +12,22 @@
 ///////////////////////////////////// COLOUR CONSOLE /////////////////////////////////////
 
 #define CC_ENABLECOLOURCONSOLE() \
-do { \
-	HANDLE console; DWORD consoleState; \
- \
-	console = GetStdHandle(STD_OUTPUT_HANDLE); \
-	if(console == INVALID_HANDLE_VALUE) { \
-		printf("GetStdHandle dead ;(\n"); \
-	} \
- \
-	GetConsoleMode(console, &consoleState); \
-	consoleState |= ENABLE_VIRTUAL_TERMINAL_PROCESSING; \
-	SetConsoleMode(console, consoleState); \
-} while(0)
+	do { \
+		HANDLE console; DWORD consoleState; \
+	 \
+		console = GetStdHandle(STD_OUTPUT_HANDLE); \
+		if(console == INVALID_HANDLE_VALUE) { \
+			printf("GetStdHandle dead ;(\n"); \
+		} \
+	 \
+		GetConsoleMode(console, &consoleState); \
+		consoleState |= ENABLE_VIRTUAL_TERMINAL_PROCESSING; \
+		SetConsoleMode(console, consoleState); \
+	} while(0)
+
+#define CC_NULL "\e[0m"
+
+#define CC_RED "\e[31m"
 
 //////////////////////////////////// ARGV HOMOGENISER ////////////////////////////////////
 
@@ -50,6 +54,9 @@ void argv_homogeniser(char** dest, int argc, char** argv) {
 
 ////////////////////////////////////////// MAIN //////////////////////////////////////////
 
+#define EXFILTRATE(...) \
+	printf(__VA_ARGS__); goto exfiltration;
+
 int main(int argc, char* argv[]) {
 	char* p;
 	char* args;
@@ -58,20 +65,21 @@ int main(int argc, char* argv[]) {
 
 	argv_homogeniser(&args, argc, argv);
 
-	printf("Received arguments: \"%s\"\n", args);
-
 	for(p=args; *p!='\0'; p++) {
 		switch(*p) {
 			case '-':
-				printf("HEY!\n");
+				if(p[1]=='f') { // file capture
+
+				} else { EXFILTRATE(CC_RED "Unrecognised dash argument -%c.\n" CC_NULL, p[1]); }
 			break;
 
 			default:
-				printf("eh.\n");
+				EXFILTRATE(CC_RED "Foreign symbols encountered.\n" CC_NULL);
 			break;
 		}
 	}
 	
+exfiltration:
 	return(0);
 }
 
