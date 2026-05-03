@@ -57,6 +57,36 @@ void argv_homogeniser(char** dest, int argc, char** argv) {
 #define EXFILTRATE(...) \
 	printf(__VA_ARGS__); goto exfiltration;
 
+#define IL_FDASHARG() do { \
+		while((0<*p)&&(*p<33)) { p++; } /* skip whitespace */ \
+		switch(*p) { \
+			case '\'': \
+				printf("string!\n"); \
+			break; \
+			 \
+			case '\0': \
+				printf("oops bye-bye\n"); \
+			break; \
+			 \
+			default: \
+				printf("content"); \
+			break; \
+		} \
+	} while(0)
+
+#define IL_DASHARGS() do { \
+		p+=2; \
+		switch(p[-1]) { \
+			case 'f': \
+				IL_FDASHARG(); \
+			break; \
+			 \
+			default: \
+				EXFILTRATE(CC_RED "Unrecognised dash argument -%c.\n" CC_NULL, p[-1]); \
+			break; \
+		} \
+	} while(0)
+
 int main(int argc, char* argv[]) {
 	char* p;
 	char* args;
@@ -68,13 +98,7 @@ int main(int argc, char* argv[]) {
 	for(p=args; *p!='\0'; p++) {
 		switch(*p) {
 			case '-':
-				if(p[1]=='f') { // file capture
-
-				} else { EXFILTRATE(CC_RED "Unrecognised dash argument -%c.\n" CC_NULL, p[1]); }
-			break;
-
-			default:
-				EXFILTRATE(CC_RED "Foreign symbols encountered.\n" CC_NULL);
+				IL_DASHARGS();
 			break;
 		}
 	}
