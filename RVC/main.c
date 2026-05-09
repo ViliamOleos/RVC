@@ -64,12 +64,11 @@ void argv_homogeniser(char** dest, int argc, char** argv) {
 				printf("string!\n"); \
 			break; \
 			 \
-			case '\0': \
-				printf("oops bye-bye\n"); \
-			break; \
-			 \
 			default: \
-				printf("content"); \
+				for(b=p; !(*b<33); b++) { } \
+				curargcontent = malloc(b-p+1); \
+				memcpy(curargcontent, p, b-p); curargcontent[b-p]='\0'; \
+				printf("RESULT: \"%s\"\n", curargcontent);
 			break; \
 		} \
 	} while(0)
@@ -88,8 +87,9 @@ void argv_homogeniser(char** dest, int argc, char** argv) {
 	} while(0)
 
 int main(int argc, char* argv[]) {
-	char* p;
+	char* p; char* b;
 	char* args;
+	char* curargcontent;
 
 		CC_ENABLECOLOURCONSOLE();
 
