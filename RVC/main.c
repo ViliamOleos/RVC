@@ -31,65 +31,62 @@
 
 ////////////////////////////////////////// MAIN //////////////////////////////////////////
 
+char* sourceFile = NULL;
+
 /// 64 (0 through 63) flags
 uint64_t flags = 0;
 #define FLAGS_SETTRUE(flag) do { flags |= 1<<(flag); } while(0)
 #define FLAGS_GET(flag) ((flags>>(flag))&1)
 #define FLAGS_HELP 0
 
+#define ERREXF(msg, ...) \
+	do { printf(CC_RED msg CC_NULL, __VA_ARGS__); goto exfiltration; } while(0)
+
 int main(int argc, char* argv[]) {
 	char* p; char* b;
 	char** argvend;
 	char* argdat;
-	uint16_t strsiz;
-
-	argdat = NULL;
+	uint64_t strsiz;
 
 		CC_ENABLECOLOURCONSOLE();
 
+	argdat = NULL;
+
+	/// TODO
 	for(argvend=(argv++)+argc; argv<argvend; argv++) {
-		switch(*(p=*argv)) {
+		if(strchr("-~", *((p=*argv)+1))) {
+			for(b=p+1; *b!='\0'; b++) { }
+			argdat = realloc(argdat, strsiz=b-p-1);
+			memcpy(argdat, p+2, strsiz);
+		} switch(*p) {
 			case '-':
 				switch(*(++p)) {
+
 					case 'h':
+							helpact:
 						FLAGS_SETTRUE(FLAGS_HELP);
 					break; case '-':
-						for(b=p; *b!='\0'; b++) { }
-						argdat = realloc(argdat, b-p);
-						memcpy(argdat, p+1, b-p);
+						if(!strcmp(argdat, "help")) { goto helpact; }
+						else { ERREXF("Unrecognised verbose dash argument \"--%s\"\n", argdat); }
+					break; 
 
-						if(!strcmp(argdat, "help")) {
-							FLAGS_SETTRUE(FLAGS_HELP);
-						}
-					break; default:
-						printf(CC_RED"Unrecognised dash argument \"-%c\"\n"CC_NULL, *p);
-						goto exfiltration;
-					break;
+					default: ERREXF("Unrecognised dash argument \"-%c\"\n", *p); break;
 				}
 			break; case '~':
 				switch(*(++p)) {
+
 					case 'f':
+							fileact:
 						argv++; p=*argv;
 						strsiz = strlen(p);
-						argdat = realloc(argdat, strsiz+1);
-						memcpy(argdat, p, strsiz+1);
-						printf("\targdat = \"%s\"\n", argdat);
+						sourceFile = realloc(sourceFile, ++strsiz);
+						memcpy(sourceFile, p, strsiz);
 					break; case '~':
-						for(b=p; *b!='\0'; b++) { }
-						argdat = realloc(argdat, b-p);
-						memcpy(argdat, p+1, b-p);
-
-						if(!strcmp(argdat, "file")) {
-							argv++; p=*argv;
-							strsiz = strlen(p);
-							argdat = realloc(argdat, strsiz+1);
-							memcpy(argdat, p, strsiz+1);
-							printf("\targdat = \"%s\"\n", argdat);
-						}
-					break; default:
-						printf(CC_RED"Unrecognised tilde argument \"~%c\"\n"CC_NULL, *p);
-						goto exfiltration;
+						if(!strcmp(argdat, "file")) { goto fileact; }
+						else { ERREXF("Unrecognised verbose tilde argument \"~~%s\"\n", argdat); }
 					break;
+
+					default: ERREXF("Unrecognised tilde argument \"-%c\"\n", *p); break;
 				}
 			break;
 		}
@@ -97,6 +94,12 @@ int main(int argc, char* argv[]) {
 
 	if(FLAGS_GET(FLAGS_HELP)) {
 		printf("Hello, World!\n");
+	} else {
+		if(sourceFile==NULL) {
+			printf("Specify file!\n");
+		} else {
+			printf("File \"%s\"\n", sourceFile);
+		}
 	}
 
 exfiltration:
