@@ -44,8 +44,12 @@ uint64_t flags = 0;
 
 int main(int argc, char* argv[]) {
 	char* p; char* b;
+
 	char** argvend;
 	char* argdat;
+
+	uint64_t sourceFile_siz;
+
 	uint64_t strsiz;
 
 		CC_ENABLECOLOURCONSOLE();
@@ -60,30 +64,34 @@ int main(int argc, char* argv[]) {
 			memcpy(argdat, p+2, strsiz);
 		} switch(*p) {
 			case '-':
-				switch(*(++p)) {
+				switch(*(++p)) { case 'h':
 
-					case 'h':
 							helpact:
 						FLAGS_SETTRUE(FLAGS_HELP);
+
 					break; case '-':
+
 						if(!strcmp(argdat, "help")) { goto helpact; }
 						else { ERREXF("Unrecognised verbose dash argument \"--%s\"\n", argdat); }
+
 					break; 
 
 					default: ERREXF("Unrecognised dash argument \"-%c\"\n", *p); break;
 				}
 			break; case '~':
-				switch(*(++p)) {
+				switch(*(++p)) { case 'f':
 
-					case 'f':
 							fileact:
 						argv++; p=*argv;
 						strsiz = strlen(p);
 						sourceFile = realloc(sourceFile, ++strsiz);
 						memcpy(sourceFile, p, strsiz);
+
 					break; case '~':
+
 						if(!strcmp(argdat, "file")) { goto fileact; }
 						else { ERREXF("Unrecognised verbose tilde argument \"~~%s\"\n", argdat); }
+
 					break;
 
 					default: ERREXF("Unrecognised tilde argument \"-%c\"\n", *p); break;
@@ -93,12 +101,20 @@ int main(int argc, char* argv[]) {
 	}
 
 	if(FLAGS_GET(FLAGS_HELP)) {
-		printf("Hello, World!\n");
+		printf("NO HELP FOR U THIS YEAR\n");
 	} else {
-		if(sourceFile==NULL) {
-			printf("Specify file!\n");
+		if(sourceFile) {
+				argdat = sourceFile;
+			sourceFile = rv_openFile(sourceFile);
+			sourceFile = rv_rbufFile(sourceFile, (sourceFile_siz=rv_filesize(sourceFile))+1);
+			if(!rv_readFile_batch(sourceFile, sourceFile_siz)) {
+				ERREXF("Failed to read \"%s\".\n", argdat);
+			}
+				free(argdat);
+			sourceFile[sourceFile_siz]='\0';
+			printf("%s\n", sourceFile);
 		} else {
-			printf("File \"%s\"\n", sourceFile);
+			ERREXF("No ~f filename argument specified.\n", NULL);
 		}
 	}
 

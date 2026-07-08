@@ -21,7 +21,7 @@ char* rv_openFile(const char* path);
 /************************************ DOCS *************************************
  * Opens a read-only file exclusively for the compiler process.                *
  * ! Uses Win32 OpenFile under the hood.                                       *
- * Buffer is initialised with a single \0.                                     *
+ * Buffer is initialised with a single zero byte for a dummy value.            *
  *                                                                             *
  *                                   RETURN                                    *
  * RVfile [X004R]                                                              *
@@ -53,9 +53,7 @@ char* rv_rbufFile(char* file, uint64_t newlen);
 char rv_readFile(char* file, uint32_t bytes);
 /************************************ DOCS *************************************
  * Transfers [bytes] bytes of data from disk to the RVfile buffer specified.   *
- * ! Uses Win32 ReadFile under the hood. To be absolutely honest, just a good  *
- *    wrapper over ReadFile, much more than any of the other functions.        *
- * Specifically compatible with Windows 7.                                     *
+ * ! Uses Win32 ReadFile under the hood, compatible with Win 7.                *
  *                                                                             *
  *                                   RETURN                                    *
  * Bool, where false (0) indicates a failure.                                  *
@@ -102,6 +100,7 @@ uint64_t rv_filesize(char* file);
  *    file data, which also has an HFILE preliminal header accessable through  *
  *    a pointer. To use just create a char pointer and proceed with the other  *
  *    library procedures. For RVfile creation, see rv_openFile(). [X001R]      *
+ *    After that, use other functions to operate with files (rebuf -> read..). *
  *                                                                             *
  *       [ HFILE* ] [ char* ]                                                  *
  *                      ^                                                      *

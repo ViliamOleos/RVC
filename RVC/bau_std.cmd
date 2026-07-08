@@ -1,1 +1,1 @@
-gcc main.c rvfile.c -o output\main.exe -O3 -mcpu=native -march=native -mtune=native -Wall -Wno-int-to-pointer-cast -Wno-strict-aliasing -std=c23
+gcc main.c rvfile.c -o output\main.exe -O3 -mcpu=native -march=native -mtune=native -Wall -Wno-int-to-pointer-cast -Wno-strict-aliasing -Wno-format-extra-args -std=c23
