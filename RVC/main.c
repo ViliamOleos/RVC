@@ -29,9 +29,14 @@
 
 #define CC_RED "\e[31m"
 
-////////////////////////////////////////// MAIN //////////////////////////////////////////
+///////////////////////////////////////// ERREXF /////////////////////////////////////////
 
-char* sourceFile = NULL;
+#define ERREXF(msg, ...) \
+	do { printf(CC_RED msg CC_NULL, __VA_ARGS__); goto exfiltration; } while(0)
+
+//////////////////////////////////////// ARGPARSE ////////////////////////////////////////
+
+char* sourceFileName = NULL;
 
 /// 64 (0 through 63) flags
 uint64_t flags = 0;
@@ -39,28 +44,17 @@ uint64_t flags = 0;
 #define FLAGS_GET(flag) ((flags>>(flag))&1)
 #define FLAGS_HELP 0
 
-#define ERREXF(msg, ...) \
-	do { printf(CC_RED msg CC_NULL, __VA_ARGS__); goto exfiltration; } while(0)
+void argparser(int argc, char* argv[]) {
 
-int main(int argc, char* argv[]) {
 	char* p; char* b;
-
 	char** argvend;
 	char* argdat;
-
-	uint64_t sourceFile_siz;
-
 	uint64_t strsiz;
 
-		CC_ENABLECOLOURCONSOLE();
-
-	argdat = NULL;
-
-	/// TODO
 	for(argvend=(argv++)+argc; argv<argvend; argv++) {
 		if(strchr("-~", *((p=*argv)+1))) {
 			for(b=p+1; *b!='\0'; b++) { }
-			argdat = realloc(argdat, strsiz=b-p-1);
+			argdat=malloc(strsiz=b-p-1);
 			memcpy(argdat, p+2, strsiz);
 		} switch(*p) {
 			case '-':
@@ -72,11 +66,11 @@ int main(int argc, char* argv[]) {
 					break; case '-':
 
 						if(!strcmp(argdat, "help")) { goto helpact; }
-						else { ERREXF("Unrecognised verbose dash argument \"--%s\"\n", argdat); }
+						else { ERREXF("Unrecognised argument \"--%s\"\n", argdat); }
 
 					break; 
 
-					default: ERREXF("Unrecognised dash argument \"-%c\"\n", *p); break;
+					default: ERREXF("Unrecognised argument \"-%c\"\n", *p); break;
 				}
 			break; case '~':
 				switch(*(++p)) { case 'f':
@@ -84,42 +78,61 @@ int main(int argc, char* argv[]) {
 							fileact:
 						argv++; p=*argv;
 						strsiz = strlen(p);
-						sourceFile = realloc(sourceFile, ++strsiz);
-						memcpy(sourceFile, p, strsiz);
+						sourceFileName = malloc(++strsiz);
+						memcpy(sourceFileName, p, strsiz);
 
 					break; case '~':
 
 						if(!strcmp(argdat, "file")) { goto fileact; }
-						else { ERREXF("Unrecognised verbose tilde argument \"~~%s\"\n", argdat); }
+						else { ERREXF("Unrecognised argument \"~~%s\"\n", argdat); }
 
 					break;
 
-					default: ERREXF("Unrecognised tilde argument \"-%c\"\n", *p); break;
+					default: ERREXF("Unrecognised argument \"~%c\"\n", *p); break;
 				}
 			break;
 		}
 	}
 
-	if(FLAGS_GET(FLAGS_HELP)) {
-		printf("NO HELP FOR U THIS YEAR\n");
+exfiltration:
+
+}
+
+////////////////////////////////////////// MAIN //////////////////////////////////////////
+
+
+int main(int argc, char* argv[]) {
+
+	char* sourceFile;
+	uint64_t sourceFile_siz;
+
+		CC_ENABLECOLOURCONSOLE();
+
+	argparser(argc, argv);
+
+	if(FLAGS_GET(FLAGS_HELP)) { printf("NO HELP FOR U THIS YEAR\n");
 	} else {
-		if(sourceFile) {
-				argdat = sourceFile;
-			sourceFile = rv_openFile(sourceFile);
-			sourceFile = rv_rbufFile(sourceFile, (sourceFile_siz=rv_filesize(sourceFile))+1);
-			if(!rv_readFile_batch(sourceFile, sourceFile_siz)) {
-				ERREXF("Failed to read \"%s\".\n", argdat);
-			}
-				free(argdat);
+
+		if(sourceFileName) {
+
+			sourceFile = rv_openFile(sourceFileName);
+			sourceFile_siz = rv_filesize(sourceFile);
+			sourceFile = rv_rbufFile(sourceFile, sourceFile_siz+1);
+			if(!rv_readFile_batch(sourceFile, sourceFile_siz))
+				{ ERREXF("Failed to read \"%s\".\n", sourceFileName); }
 			sourceFile[sourceFile_siz]='\0';
+
 			printf("%s\n", sourceFile);
-		} else {
-			ERREXF("No ~f filename argument specified.\n", NULL);
-		}
+
+			return(0);
+
+		} else { ERREXF("No ~f filename argument specified.\n", NULL); }
+		
 	}
 
 exfiltration:
-	return(0);
+	return(1);
+
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////

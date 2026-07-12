@@ -3,8 +3,9 @@
 ///////////////////////////////////////// ACTION /////////////////////////////////////////
 
 char* rv_openFile(const char* path) {
-	OFSTRUCT openstruct; 
-	HFILE* nufile = malloc(sizeof(HFILE)+1); // HEDER + NULL IN BUF
+	OFSTRUCT openstruct; HFILE* nufile;
+	
+	nufile = realloc((nufile=NULL), sizeof(HFILE)+1); // HEDER + NULL IN BUF
 
 	*nufile = OpenFile(
 		path, &openstruct,
@@ -15,12 +16,9 @@ char* rv_openFile(const char* path) {
 	return((char*)nufile);
 }
 
-void rv_closeFile(void* file) {
-	file = RVF_HEDER(file);
-	CloseHandle(*(HANDLE*)file);
-	free(file);
-}
-
+void rv_closeFile(void* file)
+	{ CloseHandle(*(HANDLE*)(file=RVF_HEDER(file))); free(file); }
+ 
 char* rv_rbufFile(char* file, uint64_t newlen) {
 	file = (char*)((HFILE*)realloc( RVF_HEDER(file), sizeof(HFILE)+newlen )+1);
 	return(file);
