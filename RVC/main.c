@@ -1,4 +1,4 @@
-////////////////////////////////////////// DECL //////////////////////////////////////////
+ ////////////////////////////////////////// DECL //////////////////////////////////////////
 
 #include <stdint.h>
 #include <stdio.h>
@@ -29,6 +29,14 @@
 
 #define CC_RED "\e[31m"
 
+//////////////////////////////////////// MEMSTATS ////////////////////////////////////////
+
+uint64_t availPhysMem() {
+	MEMORYSTATUSEX memstats;
+	GlobalMemoryStatusEx(&memstats);
+	return(memstats.ullAvailPhys);
+}
+
 ///////////////////////////////////////// ERREXF /////////////////////////////////////////
 
 #define ERREXF(msg, ...) \
@@ -38,7 +46,7 @@
 
 char* sourceFileName = NULL;
 
-/// 64 (0 through 63) flags
+/// 64 (0 to 63) flags
 uint64_t flags = 0;
 #define FLAGS_SETTRUE(flag) do { flags |= 1<<(flag); } while(0)
 #define FLAGS_GET(flag) ((flags>>(flag))&1)
@@ -60,7 +68,8 @@ void argparser(int argc, char* argv[]) {
 			case '-':
 				switch(*(++p)) { case 'h':
 
-							helpact:
+					helpact:
+
 						FLAGS_SETTRUE(FLAGS_HELP);
 
 					break; case '-':
@@ -68,14 +77,15 @@ void argparser(int argc, char* argv[]) {
 						if(!strcmp(argdat, "help")) { goto helpact; }
 						else { ERREXF("Unrecognised argument \"--%s\"\n", argdat); }
 
-					break; 
+					break;
 
 					default: ERREXF("Unrecognised argument \"-%c\"\n", *p); break;
 				}
 			break; case '~':
 				switch(*(++p)) { case 'f':
 
-							fileact:
+					fileact:
+
 						argv++; p=*argv;
 						strsiz = strlen(p);
 						sourceFileName = malloc(++strsiz);
@@ -102,37 +112,34 @@ exfiltration:
 
 
 int main(int argc, char* argv[]) {
+	char* sourceFile; uint64_t sourceFile_siz;
 
-	char* sourceFile;
-	uint64_t sourceFile_siz;
-
-		CC_ENABLECOLOURCONSOLE();
-
+	CC_ENABLECOLOURCONSOLE();
 	argparser(argc, argv);
 
-	if(FLAGS_GET(FLAGS_HELP)) { printf("NO HELP FOR U THIS YEAR\n");
+	if(FLAGS_GET(FLAGS_HELP)) {
+		printf("NO HELP FOR U THIS YEAR\n");
 	} else {
-
 		if(sourceFileName) {
 
 			sourceFile = rv_openFile(sourceFileName);
 			sourceFile_siz = rv_filesize(sourceFile);
 			sourceFile = rv_rbufFile(sourceFile, sourceFile_siz+1);
 			if(!rv_readFile_batch(sourceFile, sourceFile_siz))
-				{ ERREXF("Failed to read \"%s\".\n", sourceFileName); }
+				{ ERREXF("Failed to read \"%s\" sized %llu.\n", sourceFileName, sourceFile_siz); }
 			sourceFile[sourceFile_siz]='\0';
 
-			printf("%s\n", sourceFile);
+			puts(sourceFile);
+
+			printf("\n\nAvailable physical memory: %llu;", availPhysMem());
 
 			return(0);
 
 		} else { ERREXF("No ~f filename argument specified.\n", NULL); }
-		
 	}
 
 exfiltration:
 	return(1);
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////

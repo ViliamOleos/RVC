@@ -19,13 +19,12 @@ char* rv_openFile(const char* path) {
 void rv_closeFile(void* file)
 	{ CloseHandle(*(HANDLE*)(file=RVF_HEDER(file))); free(file); }
  
-char* rv_rbufFile(char* file, uint64_t newlen) {
-	file = (char*)((HFILE*)realloc( RVF_HEDER(file), sizeof(HFILE)+newlen )+1);
-	return(file);
-}
+char* rv_rbufFile(char* file, uint64_t newlen) 
+	{ return((char*)((HFILE*)realloc( RVF_HEDER(file), sizeof(HFILE)+newlen )+1)); }
 
 char rv_readFile(char* file, uint32_t bytes) {
 	DWORD bytesread;
+
 	return(ReadFile(
 		(HANDLE)*RVF_HEDER(file),
 		file,

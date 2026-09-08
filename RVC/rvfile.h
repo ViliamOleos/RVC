@@ -80,8 +80,7 @@ char rv_readFile_batch(char* file, uint64_t bytes);
 
 uint64_t rv_filesize(char* file);
 /************************************ DOCS *************************************
- * Tells You the size (in bytes) of an open RVfile, to be more exact, the size *
- *    on disk. [X004R]                                                         *
+ * Tells You the size (in bytes) of an open RVfile on disk. [X004R]            *
  * ! Uses Win32 GetFileSize under the hood.                                    *
  *                                                                             *
  *                                   ERRORS                                    *
