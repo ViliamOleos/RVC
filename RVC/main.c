@@ -1,4 +1,4 @@
- ////////////////////////////////////////// DECL //////////////////////////////////////////
+////////////////////////////////////////// DECL //////////////////////////////////////////
 
 #include <stdint.h>
 #include <stdio.h>
@@ -28,14 +28,6 @@
 #define CC_NULL "\e[0m"
 
 #define CC_RED "\e[31m"
-
-//////////////////////////////////////// MEMSTATS ////////////////////////////////////////
-
-uint64_t availPhysMem() {
-	MEMORYSTATUSEX memstats;
-	GlobalMemoryStatusEx(&memstats);
-	return(memstats.ullAvailPhys);
-}
 
 ///////////////////////////////////////// ERREXF /////////////////////////////////////////
 
@@ -112,6 +104,7 @@ exfiltration:
 
 
 int main(int argc, char* argv[]) {
+	uint64_t i;
 	char* sourceFile; uint64_t sourceFile_siz;
 
 	CC_ENABLECOLOURCONSOLE();
@@ -127,11 +120,10 @@ int main(int argc, char* argv[]) {
 			sourceFile = rv_rbufFile(sourceFile, sourceFile_siz+1);
 			if(!rv_readFile_batch(sourceFile, sourceFile_siz))
 				{ ERREXF("Failed to read \"%s\" sized %llu.\n", sourceFileName, sourceFile_siz); }
-			sourceFile[sourceFile_siz]='\0';
 
-			puts(sourceFile);
-
-			printf("\n\nAvailable physical memory: %llu;", availPhysMem());
+			for(i=0; i<sourceFile_siz; i++) {
+				putc(sourceFile[i], stdout);
+			}
 
 			return(0);
 
