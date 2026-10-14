@@ -102,17 +102,17 @@ exfiltration:
 
 ////////////////////////////////////////// MAIN //////////////////////////////////////////
 
+uint64_t readhead;
 
 int main(int argc, char* argv[]) {
-	uint64_t i;
+
 	char* sourceFile; uint64_t sourceFile_siz;
 
-	CC_ENABLECOLOURCONSOLE();
+		CC_ENABLECOLOURCONSOLE();
+
 	argparser(argc, argv);
 
-	if(FLAGS_GET(FLAGS_HELP)) {
-		printf("NO HELP FOR U THIS YEAR\n");
-	} else {
+	if(FLAGS_GET(FLAGS_HELP)) { printf("NO HELP FOR U THIS YEAR\n"); } else {
 		if(sourceFileName) {
 
 			sourceFile = rv_openFile(sourceFileName);
@@ -121,8 +121,12 @@ int main(int argc, char* argv[]) {
 			if(!rv_readFile_batch(sourceFile, sourceFile_siz))
 				{ ERREXF("Failed to read \"%s\" sized %llu.\n", sourceFileName, sourceFile_siz); }
 
-			for(i=0; i<sourceFile_siz; i++) {
-				putc(sourceFile[i], stdout);
+			for(readhead=0; readhead<sourceFile_siz;) {
+				switch(sourceFile[readhead]) {
+					case 'a' ... 'z':
+						printf("%c", sourceFile[readhead]);
+					break;
+				}; readhead++;
 			}
 
 			return(0);
@@ -131,7 +135,9 @@ int main(int argc, char* argv[]) {
 	}
 
 exfiltration:
+
 	return(1);
+
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
