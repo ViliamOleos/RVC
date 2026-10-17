@@ -34,6 +34,9 @@
 #define ERREXF(msg, ...) \
 	do { printf(CC_RED msg CC_NULL, __VA_ARGS__); goto exfiltration; } while(0)
 
+#define MSGEXF(msg) \
+	do { puts(CC_RED msg CC_NULL); goto exfiltration; } while(0)
+
 //////////////////////////////////////// ARGPARSE ////////////////////////////////////////
 
 char* sourceFileName = NULL;
@@ -129,10 +132,10 @@ int main(int argc, char* argv[]) {
 				}; readhead++;
 			}
 
-			return(0);
-
-		} else { ERREXF("No ~f filename argument specified.\n", NULL); }
+		} else { MSGEXF("No ~f filename argument specified.\n"); }
 	}
+
+	return(0);
 
 exfiltration:
 

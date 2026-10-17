@@ -1,7 +1,7 @@
 @echo off
 
 IF ["%~1"]==["clean"] (
-	SET "wnos=-Wno-int-to-pointer-cast -Wno-strict-aliasing -Wno-format-extra-args -Wno-maybe-uninitialized"
+	SET "wnos=-Wno-int-to-pointer-cast -Wno-strict-aliasing -Wno-maybe-uninitialized"
 ) ELSE (
 	SET "wnos="
 )
